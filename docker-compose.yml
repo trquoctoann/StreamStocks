@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # periodic_ingestion:
+  #   build:
+  #     context: ./data_ingestion/periodic
+  #   volumes:
+  #     - ./logs/periodic:/app/logs
+  #   environment:
+  #     LOG_DIR: /app/logs
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: homie
+      POSTGRES_PASSWORD: Toan@972002
+      POSTGRES_DB: stream_stocks
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - stream_stocks_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: quoctoan09072002@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Toan@972002
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - stream_stocks_network
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  stream_stocks_network:
+    driver: bridge
